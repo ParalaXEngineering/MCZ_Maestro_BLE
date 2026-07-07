@@ -5,8 +5,8 @@ implements the whole protocol core — AES framing, Modbus, the register map, an
 and is the intended foundation for the eventual Home Assistant integration. It mirrors the community
 project `foyewmaddeeb/mcz-maestro-ble`.
 
-Protocol references: [../panel/ble-control-protocol.md](../panel/ble-control-protocol.md),
-[../docs/frame-format.md](../docs/frame-format.md), [../docs/modbus-registers.md](../docs/modbus-registers.md).
+Protocol reference: [../docs/ble-protocol.md](../docs/ble-protocol.md) (GATT, AES envelope, frames,
+register map, pairing). Bench setup: [../docs/setup.md](../docs/setup.md).
 
 ## Requirements
 

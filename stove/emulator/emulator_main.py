@@ -10,7 +10,7 @@
 # NOTE (resolved 2026-07-07): this reply does NOT open the panel's BLE control gate,
 # and no reply can. That gate is a commissioning/pairing gate, not a mainboard-health
 # check, and reads no mainboard register to decide it - see
-# ../../docs/ble-readiness-gate-RESOLVED.md. The panel already ACCEPTS this reply with
+# ../../docs/reference/readiness-gate.md. The panel already ACCEPTS this reply with
 # no parser error; that is all the emulator needs to do. To open BLE control, put the
 # panel through pairing/provisioning (that sets the enable bit), not a better reply.
 # Verify this reply's framing offline with diagnostics/verify_reply.py.

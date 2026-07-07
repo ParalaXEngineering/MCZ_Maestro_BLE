@@ -3,7 +3,7 @@
 
 WHY: the panel's BLE connect handler (0x400d26ae) refuses control sessions until an
 internal "enable" bit is set by the commissioning/pairing flow (see
-docs/ble-readiness-gate-RESOLVED.md). On a bare bench dev board that flow never runs, so
+docs/reference/readiness-gate.md). On a bare bench dev board that flow never runs, so
 every connect is `rejected Nm0`. This makes the WHOLE BLE control stack (keys, framing,
 0xABF0 reads/writes, pairing) untestable on the bench.
 

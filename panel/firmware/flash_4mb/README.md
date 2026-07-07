@@ -44,7 +44,7 @@ esptool --chip esp32 --port /dev/tty.usbserial-XXXX --baud 921600 \
 
 The stock app refuses every BLE control session with `rejected Nm0` until the panel's
 commissioning/pairing flow sets an internal enable bit — which never happens on a bare dev
-board (full analysis: [../../../docs/ble-readiness-gate-RESOLVED.md](../../../docs/ble-readiness-gate-RESOLVED.md)).
+board (full analysis: [../../../docs/reference/readiness-gate.md](../../../docs/reference/readiness-gate.md)).
 To validate the BLE stack end-to-end on the bench, flash a patched app that jumps past both
 readiness gates straight into the whitelist logic (empty whitelist → auto-register + accept).
 
@@ -74,7 +74,7 @@ commissioning; see the RESOLVED doc). Revert by reflashing `app_ota0.bin`.
 > encrypted `0xABF0` register reads + a write round-trip to the mainboard emulator and back.
 > Evidence: `captures/gateopen_panel_console.log`, `captures/gateopen_ble_session.log`,
 > `captures/gateopen_emulator.log`. Full write-up:
-> [../../../docs/ble-readiness-gate-RESOLVED.md](../../../docs/ble-readiness-gate-RESOLVED.md#bench-validation-done-2026-07-07).
+> [../../../docs/reference/readiness-gate.md](../../../docs/reference/readiness-gate.md#bench-validation--done-2026-07-07).
 
 ### Test it
 
@@ -103,7 +103,7 @@ Then run `python ../../../ble-client/mcz_ble_client.py scan` from your laptop �
   copy the last serial lines — that tells us which init blocks without the real panel hardware,
   and we adjust.
 - Reminder: with no mainboard on UART2, register READS won't be answered; this validates BLE +
-  pairing + service 0xABF0 + frame acceptance (see ../../ble-control-protocol.md). For real register
+  pairing + service 0xABF0 + frame acceptance (see ../../../docs/ble-protocol.md). For real register
   values, run the mainboard emulator too (see ../../../stove/emulator/README.md).
 
 > This file documents the trimmed 4 MB flash set specifically. For the canonical panel overview and

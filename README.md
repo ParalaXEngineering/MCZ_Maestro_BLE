@@ -1,28 +1,33 @@
-# MCZ Maestro+ — local control research
+# MCZ Maestro+ — local BLE control (proof of concept)
 
-Notes, tools, and a bench emulator for controlling an **MCZ Maestro+ pellet stove**
-**locally** from Home Assistant, over the stove's own Bluetooth Low Energy (BLE) interface,
-**without modifying the stove** (so the manufacturer warranty stays intact).
+A working proof of concept for controlling an **MCZ Maestro+ pellet stove** locally over its own
+**Bluetooth Low Energy** interface — no cloud, no stove modification. The goal is to give the
+existing Home Assistant integration [Robbe-B/maestro_mcz](https://github.com/Robbe-B/maestro_mcz) a
+**local polling** path to replace (or complement) its current cloud dependency.
 
-This is device-interoperability research on hardware the author owns. It reverse-engineers the
-local control protocol of the stove's Wi-Fi/BLE panel so an open-source Home Assistant
-integration can talk to it directly, instead of depending on the manufacturer's cloud. It builds
-on and cross-checks two public community projects:
+The local BLE control stack is **validated end-to-end on a two-board bench**: a live panel accepts a
+BLE session and round-trips encrypted register reads and writes. See [Status](#status).
+
+## What this is
+
+`maestro_mcz` controls the stove through the MCZ **cloud** (MQTT) — which needs the internet, MCZ's
+servers, and polls slowly. This project reverse-engineers the stove's **local** control protocol so
+Home Assistant can talk to it directly over BLE, exactly as the MCZ phone app does at close range.
+
+- **Scope:** interoperability on hardware the author owns. Read status and send the same commands the
+  official app sends, over the same local BLE channel.
+- **No stove modification.** All development is on spare ESP32 dev boards standing in for the stove
+  until the real unit arrives, so the manufacturer warranty stays intact.
+- **The keys are not secrets.** The AES keys and identifiers here are **static values compiled into
+  the panel firmware, shared across this firmware generation** — not per-device secrets, and already
+  published by the community project below. Per-device identity is only the BLE MAC and the stove
+  serial number.
+
+Builds on and cross-checks two community projects:
 
 - BLE bridge: <https://github.com/foyewmaddeeb/mcz-maestro-ble>
-- Cloud-based HA integration: <https://github.com/Robbe-B/maestro_mcz>
-- Upstream discussion: <https://github.com/Robbe-B/maestro_mcz/issues/215>
-
-## Scope and intent
-
-- The goal is **interoperability**: let Home Assistant read status and send the same commands the
-  official MCZ app already sends, over the same local BLE channel.
-- The **real stove firmware is never modified**. All development is done on **spare ESP32 dev
-  boards** that stand in for the stove until the physical unit arrives.
-- The AES keys and identifiers documented here are **static values compiled into the panel
-  firmware, shared across this firmware generation** (not per-device secrets). They are also
-  already published by the community project above. Per-device identity is only the BLE MAC and
-  the stove serial number.
+- Cloud HA integration: <https://github.com/Robbe-B/maestro_mcz>
+  ([upstream discussion #215](https://github.com/Robbe-B/maestro_mcz/issues/215))
 
 ## The system in one picture
 
@@ -34,67 +39,85 @@ on and cross-checks two public community projects:
                                      └──────────────┘                    └───────────────┘
 ```
 
-- The **panel** is an ESP32 that bridges two worlds: it talks to the MCZ cloud over MQTT/TLS and
-  to the **combustion mainboard** over a UART using Modbus. All stove control is Modbus register
-  reads/writes; the panel relays them from either the cloud or the local BLE service.
-- **Home Assistant** can drive the panel over BLE, exactly as the MCZ phone app does. That is the
-  path this project targets.
+The **panel** is an ESP32 that bridges two worlds — the MCZ cloud over MQTT/TLS, and a local BLE
+service — down to the **combustion mainboard** over a UART using Modbus. All stove control is Modbus
+register reads/writes; the panel just relays them. **Home Assistant can drive the panel over BLE,
+exactly as the phone app does** — that's the path this project targets. Full breakdown:
+[docs/reference/architecture.md](docs/reference/architecture.md).
+
+## How it was tested
+
+The physical stove wasn't available during development, so the whole pipeline was reproduced on a
+bench from a firmware dump:
+
+1. A **flash dump** of a real panel was flashed onto an ESP32 dev board — a live "panel" with no stove
+   attached.
+2. A **second ESP32** runs a MicroPython **mainboard emulator**, wired to the panel's UART2, answering
+   its Modbus polls so the panel behaves as if a stove is attached.
+3. A **laptop** drives the panel over BLE with the Python client, exercising the real `0xABF0`
+   protocol — reads, writes, pairing, the readiness gate.
+
+This bench proves the **protocol** (keys, framing, service, reads/writes). It does not prove the
+register **values** — those come from the emulator's placeholders and need a real mainboard to
+confirm. Full recipe: [docs/setup.md](docs/setup.md).
+
+## How it integrates into Home Assistant
+
+The outcome is a **hybrid** integration for `maestro_mcz`: keep the cloud for the per-model profile it
+already fetches, add BLE as a fast, local transport for status polling and control. BLE reaches HA
+either natively (`bleak`), through an ESPHome BLE proxy, or via an ESP32→MQTT bridge. The protocol
+core is already implemented in [`ble-client/mcz_ble_client.py`](ble-client/mcz_ble_client.py). Full
+plan and the path to upstream: [docs/integration.md](docs/integration.md).
 
 ## Repository layout
 
 | Path | What's inside |
-|------|----------------|
-| `docs/` | Cross-cutting protocol specs shared by both interfaces |
-| `docs/architecture.md` | System overview, boards, and the three control paths |
-| `docs/aes-encryption.md` | The AES-128-CBC scheme, keys, IV, token (with a worked example) |
-| `docs/frame-format.md` | Exact byte layout of a message on both BLE and UART2 |
-| `docs/modbus-registers.md` | Modbus function codes, register map, state codes |
-| `docs/status-and-open-questions.md` | Where the work stands and what's left |
-| `docs/ble-readiness-gate-RESOLVED.md` | The readiness gate, resolved: it's a commissioning/pairing gate, not a mainboard one |
-| `docs/bench-hardware.md` | The two-board bench rig: board MACs, BLE addresses, backups |
-| `panel/` | The ESP32 Wi-Fi/BLE panel: firmware, protocol it exposes, disassembly |
-| `panel/README.md` | Panel hardware, partition layout, boot behaviour, flashing |
-| `panel/ble-control-protocol.md` | The local BLE control service (`0xABF0`) and its readiness gate |
-| `panel/disassembly-notes.md` | Firmware reverse-engineering notes (addresses, findings, tooling) |
-| `panel/firmware/` | Flash images and backups (the panel dump and a per-board backup) |
-| `panel/tools/` | Firmware analyser and serial-console helpers |
-| `stove/` | The combustion mainboard, the panel↔mainboard link, and the cloud path |
-| `stove/uart2-mainboard-link.md` | The panel↔mainboard UART protocol (the main new discovery) |
-| `stove/cloud-mqtt.md` | The MCZ cloud path, documented for completeness |
-| `stove/emulator/` | A bench "mainboard" emulator so the panel works without a real stove |
-| `ble-client/` | The Python BLE client (protocol core for the future HA integration) |
-| `captures/` | Serial/BLE logs kept as an evidence trail |
-| `archive/legacy-notes/` | The original working notes, superseded by `docs/` (kept for history) |
+|------|---------------|
+| **[docs/setup.md](docs/setup.md)** | Build the bench: flash the panel, run the emulator, wire UART2, drive it from a laptop |
+| **[docs/ble-protocol.md](docs/ble-protocol.md)** | **The HA-relevant spec** — GATT `0xABF0`, AES envelope, frames, register map, pairing |
+| **[docs/integration.md](docs/integration.md)** | How this becomes local polling in `maestro_mcz` |
+| [docs/reference/](docs/reference/) | Internals, for reference and future work — see below |
+| [ble-client/](ble-client/) | The Python BLE client (protocol core for the future HA integration) |
+| [panel/](panel/) | The ESP32 panel: firmware images, flashing, disassembly tools |
+| [stove/emulator/](stove/emulator/) | The bench mainboard emulator (MicroPython) + the diagnostics that decoded the UART2 link |
+| [captures/](captures/) | Key serial/BLE logs kept as an evidence trail |
+
+`docs/reference/` (only needed if you want to dig into the firmware or the stove internals):
+
+| Doc | What |
+|-----|------|
+| [architecture.md](docs/reference/architecture.md) | The three boards and three control paths |
+| [uart2-link.md](docs/reference/uart2-link.md) | The internal panel↔mainboard UART2 protocol |
+| [readiness-gate.md](docs/reference/readiness-gate.md) | Why a bench panel refuses BLE, and what opens the gate |
+| [firmware-disassembly.md](docs/reference/firmware-disassembly.md) | Reverse-engineering notes: addresses, tooling, findings |
+| [cloud-mqtt.md](docs/reference/cloud-mqtt.md) | The MCZ cloud path, documented for completeness |
 
 ## Quick start
 
 ```bash
-# Python env (Windows venv used during development; Linux/HA is the eventual target)
-python -m pip install -r requirements.txt      # bleak, cryptography, pyserial, esptool
+python -m pip install -r requirements.txt          # bleak, cryptography, pyserial, esptool
 
-# Prove the BLE protocol core is correct without any hardware:
+# Prove the BLE protocol core is correct with no hardware:
 python ble-client/mcz_ble_client.py selftest
 ```
 
-To reproduce the bench (panel on one ESP32, mainboard emulator on another), see
-[`stove/emulator/README.md`](stove/emulator/README.md) and [`panel/README.md`](panel/README.md).
+To reproduce the full bench, follow [docs/setup.md](docs/setup.md).
 
-## Status (2026-07-07)
+## Status
 
-The local BLE protocol and the panel↔mainboard link are both fully understood, and a bench rig
-(panel + emulated mainboard) is standing. The panel's **readiness gate** — the last thing standing
-between the bench and a live BLE control session — is now **resolved**: it turned out to be a
-**commissioning/pairing** gate, *not* a mainboard-health check, so no UART reply opens it. The
-unblock is to put the panel through pairing/provisioning (which sets the enable bit); the mainboard
-emulator is already sufficient and its reply is accepted without error. Byte-level evidence and the
-exact steps: [`docs/ble-readiness-gate-RESOLVED.md`](docs/ble-readiness-gate-RESOLVED.md). Earlier
-framing and reasoning trail: [`docs/status-and-open-questions.md`](docs/status-and-open-questions.md).
+_Last updated 2026-07-07._
 
-**The full BLE control stack is now validated end-to-end on the bench.** Using a gate-open dev-board
-build (`panel/tools/patch_open_gate.py`, bench-only), a live panel boots, **accepts** a BLE session
-(no `rejected Nm0`), and round-trips **encrypted register reads and writes** through to the mainboard
-emulator — proving keys, framing, `0xABF0`, pairing/whitelist, reads and writes on real hardware
-(evidence: `captures/gateopen_*.log`). This is a working POC for a **local, cloud-free, BLE-oriented
-Home Assistant integration**. What remains is **device-reality validation on the actual stove**:
-confirm a factory-paired (unmodified) panel accepts control the same way, and check the register map
-against a live mainboard — the bench proves the *protocol*, not the register *values*.
+**The local BLE control stack is validated end-to-end on the bench.** Using a gate-open dev-board
+build (bench-only), a live panel boots, **accepts** a BLE session (no `rejected Nm0`), and round-trips
+**encrypted register reads and writes** through to the mainboard emulator — proving keys, framing,
+`0xABF0`, pairing/whitelist, and reads/writes on real hardware (evidence: `captures/gateopen_*.log`).
+
+Along the way, two things were fully decoded: the BLE control protocol, and the internal
+panel↔mainboard UART2 link (same AES envelope, different function codes). The panel's **readiness
+gate** — the last blocker — turned out to be a **commissioning/pairing** gate, not a mainboard-health
+check: entering pairing mode opens it, and no mainboard reply is needed. Details:
+[docs/reference/readiness-gate.md](docs/reference/readiness-gate.md).
+
+**What remains is device-reality validation on the actual stove:** confirm a factory-paired
+(unmodified) panel accepts control the same way, and check the register map against a live mainboard.
+The bench proves the *protocol*; it does not prove the register *values*.
