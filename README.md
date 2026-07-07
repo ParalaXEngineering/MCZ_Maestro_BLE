@@ -15,8 +15,6 @@ on and cross-checks two public community projects:
 
 ## Scope and intent
 
-- The subject device is **owned by the author**. The firmware image analysed here was read from
-  the author's own panel board.
 - The goal is **interoperability**: let Home Assistant read status and send the same commands the
   official MCZ app already sends, over the same local BLE channel.
 - The **real stove firmware is never modified**. All development is done on **spare ESP32 dev
