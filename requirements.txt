@@ -1,0 +1,10 @@
+bleak
+cryptography
+pyserial
+esptool
+mpremote
+
+# Firmware reverse-engineering only (panel/tools/analyze.py and panel/tools/xdis.py).
+# Needs the Xtensa backend, which is in the 6.x pre-release:
+#   pip install --pre 'capstone>=6.0'
+# capstone

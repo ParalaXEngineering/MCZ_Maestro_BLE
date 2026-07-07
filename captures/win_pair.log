@@ -1,0 +1,10 @@
+== scan ==
+FOUND EC:E3:34:21:19:92 rssi=-78
+
+== pair (raw winrt) ==
+  is_paired=False can_pair=True
+  pair status: 19
+  paired: False
+
+== connect after pairing ==
+  connect failed: BleakError Could not get GATT services: Unreachable

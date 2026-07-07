@@ -1,0 +1,33 @@
+[  0.11] ets Jul 29 2019 12:21:46
+[  0.11] 
+[  0.11] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[  0.11] configsip: 0, SPIWP:0xee
+[  0.11] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[  0.11] mode:DIO, clock div:2
+[  0.11] load:0x3fff0030,len:1676
+[  0.11] ho 0 tail 12 room 4
+[  0.11] load:0x40078000,len:13048
+[  0.11] ho 0 tail 12 room 4
+[  0.11] load:0x40080400,len:3604
+[  0.11] entry 0x400805f0
+[  1.05] [0;33mW (999) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[  1.16] Found
+[  1.92] No OTA pending 2 
+[  1.92] new version
+[  3.97] Letto resetParam 0
+[ 11.42] Dev: -1 - 4354 
+[ 11.42] Found
+[ 11.42] timerPairBle
+[ 11.42] Controller init
+[ 11.53] Controller enable
+[ 11.64] Bluedroid init
+[ 11.75] Bluedroid enable
+[ 11.75] Gatt cb
+[ 11.76] Gap cb
+[ 11.76] App reg
+[ 11.76] Found
+[ 11.76] Found RE 0 
+[ 11.76] ADV start
+[ 23.35] Connect
+[ 42.83] disconnected
+[ 42.94] ADV start

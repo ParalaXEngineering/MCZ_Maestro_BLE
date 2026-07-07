@@ -1,0 +1,41 @@
+# Gate-open bench validation — BLE client session (laptop), 2026-07-07
+# Panel running app_ota0_gateopen.bin (gate bypassed), NVS erased, mainboard emulator on COM38.
+# Client: ble-client/mcz_ble_client.py against A0:A3:B3:2C:F0:82 (MCZ_EP000000).
+
+=== scan ===
+  MATCH A0:A3:B3:2C:F0:82  'MCZ_EP000000'  rssi=-39
+
+=== dump (GATT enumerate + poke reads) ===
+===== FULL GATT DATABASE (live) =====
+[service] 00001801-0000-1000-8000-00805f9b34fb  Generic Attribute Profile
+    [char] 00002a05  handle=2  (indicate)
+[service] 00001800-0000-1000-8000-00805f9b34fb  Generic Access Profile
+    [char] 00002a00  handle=21 (read) = b'MCZ_EP'
+    [char] 00002a01  handle=23 (read) = b'\x00\x00'
+    [char] 00002aa6  handle=25 (read) = b'\x01'
+[service] 0000abf0-0000-1000-8000-00805f9b34fb  Vendor specific
+    [char] 0000abf1  handle=41 (write-without-response,read)
+    [char] 0000abf2  handle=43 (notify,read)
+    [char] 0000abf3  handle=46 (write-without-response,read)
+    [char] 0000abf4  handle=48 (notify,read)
+=====================================
+[subscribed] 0000abf2 / 0000abf4
+[poke] sending poll(0x02BC) + read(0x0320,4) + read(0x0ADC,8)
+--> READ  0x02BC x51
+[rx] read reply ctr=6a418000 -> room=0.0C set=? pow=? phase=None state=?
+--> READ  0x0320 x4
+[rx] read reply ctr=6a418001 -> room=0.0C set=? pow=? phase=0 state=Off
+--> READ  0x0ADC x8
+[rx] read reply ctr=6a418002 -> room=0.0C set=? pow=? phase=0 state=Off
+[link] disconnected
+
+=== write 0x03F7 = 210 (set 21.0 C) ===
+[connected] A0:A3:B3:2C:F0:82  mtu=517
+[ready] tx=0000abf1 notify=0000abf2 subscribed
+--> WRITE 0x03F7 = 0x00D2 (210)   ** changes the oven **
+[link] disconnected
+
+# RESULT: connect ACCEPTED (no rejected Nm0), 0xABF0 enumerated, encrypted register
+# reads round-tripped end-to-end (panel -> UART2 -> emulator -> panel -> BLE notify),
+# and an encrypted write was accepted. Register VALUES are the emulator's defaults
+# (state=Off, room=0.0C), not real stove data — this validates the path, not the data.

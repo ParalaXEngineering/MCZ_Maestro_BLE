@@ -1,0 +1,30 @@
+Traceback (most recent call last):
+  File "C:\Users\remacle\OneDrive - FN Browning Group\Documents\AI\12_MCZ\win_diag.py", line 39, in main
+    await c.connect()
+  File "C:\Users\remacle\OneDrive - FN Browning Group\Documents\AI\12_MCZ\.venv\Lib\site-packages\bleak\__init__.py", line 660, in connect
+    await self._backend.connect(self._pair_before_connect, **kwargs)
+  File "C:\Users\remacle\OneDrive - FN Browning Group\Documents\AI\12_MCZ\.venv\Lib\site-packages\bleak\backends\winrt\client.py", line 428, in connect
+    self.services = await self._get_services(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "C:\Users\remacle\OneDrive - FN Browning Group\Documents\AI\12_MCZ\.venv\Lib\site-packages\bleak\backends\winrt\client.py", line 713, in _get_services
+    services = _ensure_success(
+        result,
+        "services",
+        "Could not get GATT services",
+    )
+  File "C:\Users\remacle\OneDrive - FN Browning Group\Documents\AI\12_MCZ\.venv\Lib\site-packages\bleak\backends\winrt\client.py", line 132, in _ensure_success
+    raise BleakError(f"{fail_msg}: Unreachable")
+bleak.exc.BleakError: Could not get GATT services: Unreachable
+== scan ==
+FOUND EC:E3:34:21:19:92 name='MCZ_EP000000' rssi=-78
+   adv service_uuids=['0000abf0-0000-1000-8000-00805f9b34fb']
+   adv manufacturer={}
+   adv service_data={}
+
+== A: plain connect (BLEDevice, 30s) ==
+  A failed: BleakError Could not get GATT services: Unreachable
+
+== B: pair() then connect ==

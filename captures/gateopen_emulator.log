@@ -1,0 +1,23 @@
+# Gate-open bench validation — mainboard emulator console (COM38), 2026-07-07
+# ESP32 MicroPython running stove/emulator/emulator_main.py, wired to panel UART2.
+# Shows the emulator decrypting and answering the panel's 1 Hz register polls.
+
+ets Jul 29 2019 12:21:46
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+entry 0x400805a8
+EMU v2 up: UART2 115200 8N1 tx=4 rx=5, AES/token ready
+REQ ctr=56 func=0x41 reg=0x02bc len=6 -> RESP pdu=42B
+REQ ctr=57 func=0x41 reg=0x02bc len=6 -> RESP pdu=42B
+REQ ctr=58 func=0x41 reg=0x02bc len=6 -> RESP pdu=42B
+REQ ctr=59 func=0x41 reg=0x02bc len=6 -> RESP pdu=42B
+hb decoded_ok=4 responded=4
+REQ ctr=60 func=0x41 reg=0x02bc len=6 -> RESP pdu=42B
+REQ ctr=61 func=0x41 reg=0x02bc len=6 -> RESP pdu=42B
+REQ ctr=62 func=0x41 reg=0x02bc len=6 -> RESP pdu=42B
+REQ ctr=63 func=0x41 reg=0x02bc len=6 -> RESP pdu=42B
+hb decoded_ok=8 responded=8
+
+# The emulator answers every poll (func 0x41, reg 0x02bc) with a 42-byte reply PDU.
+# This keeps the panel's mainboard link healthy; it does NOT open the BLE gate
+# (the gate is bypassed by the patched app, not by any UART reply). See
+# docs/ble-readiness-gate-RESOLVED.md.

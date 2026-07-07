@@ -1,0 +1,35 @@
+=== MCZ BLE dump starting mar.  7 juil. 2026 07:29:01 CEST ===
+[link] disconnected
+[connect] attempt 1 failed: BleakError: disconnected
+[link] disconnected
+[connect] attempt 2 failed: BleakError: disconnected
+[link] disconnected
+[connect] attempt 3 failed: BleakError: disconnected
+[link] disconnected
+[connect] attempt 4 failed: BleakError: disconnected
+[link] disconnected
+[connect] attempt 5 failed: BleakError: disconnected
+[link] disconnected
+[connect] attempt 6 failed: BleakError: disconnected
+Traceback (most recent call last):
+  File "/Users/mremacle/Documents/ParalaX/AI/12_MCZ/mcz_ble_client.py", line 416, in <module>
+    main()
+    ~~~~^^
+  File "/Users/mremacle/Documents/ParalaX/AI/12_MCZ/mcz_ble_client.py", line 412, in main
+    asyncio.run(run(args))
+    ~~~~~~~~~~~^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 205, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/runners.py", line 128, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/mremacle/Documents/ParalaX/AI/12_MCZ/mcz_ble_client.py", line 342, in run
+    await m.connect(timeout=args.timeout, do_pair=args.pair, require_service=False)
+  File "/Users/mremacle/Documents/ParalaX/AI/12_MCZ/mcz_ble_client.py", line 189, in connect
+    raise RuntimeError(f"could not establish a stable connection: {last}")
+RuntimeError: could not establish a stable connection: disconnected
+=== done (exit 0) — tell Claude to read ble_dump.log ===

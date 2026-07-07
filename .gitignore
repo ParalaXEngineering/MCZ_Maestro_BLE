@@ -1,0 +1,13 @@
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+
+# OS junk
+.DS_Store
+
+# Large firmware/flash images are kept in the repo for reproducibility, but if you
+# prefer to keep the repo light, track them with git-lfs or uncomment below:
+# panel/firmware/used_flash_0x0.bin
+# panel/firmware/com39_antenna_backup.bin
+# stove/emulator/micropython_esp32.bin

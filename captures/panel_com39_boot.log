@@ -1,0 +1,45 @@
+[reset] board reset, pairing window reopened
+[   0.0] ets Jul 29 2019 12:21:46
+[   0.0] 
+[   0.0] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[   0.0] configsip: 0, SPIWP:0xee
+[   0.0] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[   0.0] mode:DIO, clock div:2
+[   0.0] load:0x3fff0030,len:1676
+[   0.0] ho 0 tail 12 room 4
+[   0.2] load:0x40078000,len:13048
+[   0.2] ho 0 tail 12 room 4
+[   0.2] load:0x40080400,len:3604
+[   0.2] entry 0x400805f0
+[   1.1] [0;33mW (999) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[   1.3] Found
+[   1.9] No OTA pending 2 
+[   1.9] new version
+[   3.1] Timeout 2
+[   3.9] Timeout 1
+[   4.1] Letto resetParam 0
+[   4.9] Timeout 1
+[   5.9] Timeout 1
+[   6.9] Timeout 1
+[   7.9] Timeout 1
+[   9.0] Timeout 2
+[  10.0] Timeout 1
+[  11.0] Timeout 1
+[  11.4] Dev: -1 - 4354 
+[  11.4] Found
+[  11.4] timerPairBle
+[  11.4] Controller init
+[  11.6] Controller enable
+[  11.6] Bluedroid init
+[  11.8] Bluedroid enable
+[  11.8] Gatt cb
+[  11.8] Gap cb
+[  11.8] App reg
+[  11.8] Found
+[  11.8] Found RE 0 
+[  11.8] ADV start
+[  12.0] Timeout 1
+[  13.0] Timeout 1
+[  14.0] Timeout 1
+[  15.0] Timeout 1
+[capture ended]

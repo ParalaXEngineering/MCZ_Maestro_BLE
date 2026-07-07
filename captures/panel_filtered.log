@@ -1,0 +1,42 @@
+[   0.2] ets Jul 29 2019 12:21:46
+[   0.2] rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+[   0.2] configsip: 0, SPIWP:0xee
+[   0.2] clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+[   0.2] mode:DIO, clock div:2
+[   0.2] load:0x3fff0030,len:1676
+[   0.2] ho 0 tail 12 room 4
+[   0.2] load:0x40078000,len:13048
+[   0.2] ho 0 tail 12 room 4
+[   0.2] load:0x40080400,len:3604
+[   0.2] entry 0x400805f0
+[   1.0] [0;33mW (999) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`[0m
+[   1.2] Found
+[   1.9] No OTA pending 2
+[   1.9] new version
+[   4.0] Letto resetParam 0
+[  10.0] --- heartbeat (waiting for events) ---
+[  11.5] Dev: -1 - 4354
+[  11.5] Found
+[  11.5] timerPairBle
+[  11.5] Controller init
+[  11.5] Controller enable
+[  11.7] Bluedroid init
+[  11.7] Bluedroid enable
+[  11.7] Gatt cb
+[  11.7] Gap cb
+[  11.7] App reg
+[  11.7] Found
+[  11.9] Found RE 0
+[  11.9] ADV start
+[  20.2] --- heartbeat (waiting for events) ---
+[  30.3] --- heartbeat (waiting for events) ---
+[  40.5] --- heartbeat (waiting for events) ---
+[  50.5] --- heartbeat (waiting for events) ---
+[  60.7] --- heartbeat (waiting for events) ---
+[  70.8] --- heartbeat (waiting for events) ---
+[  80.9] --- heartbeat (waiting for events) ---
+[  91.1] --- heartbeat (waiting for events) ---
+[ 101.3] --- heartbeat (waiting for events) ---
+[ 111.5] --- heartbeat (waiting for events) ---
+[ 121.5] --- heartbeat (waiting for events) ---
+[capture ended]
